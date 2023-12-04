@@ -4,7 +4,7 @@ using namespace std;
 
 vector<string> getMatches(
         const string &input, const string &reg_in, bool overlap = true
-) { // maybe put an lvalue ref on reg_in
+) { // maybe put a lvalue ref on reg_in
     vector<string> found_matches{};
     regex re;
     if (overlap) {
@@ -47,7 +47,7 @@ string addValueToMatch(const string &input, const string &regexPattern, const in
         smatch match = *iter;
         size_t matchPos = match.position();
         for (size_t i = 0; i < match.length(); ++i) {
-            result[matchPos + i] += valueToAdd;
+            result[matchPos + i] += valueToAdd; // NOLINT(cppcoreguidelines-narrowing-conversions)
         }
         ++iter;
     }
