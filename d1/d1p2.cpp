@@ -1,32 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long ll;
-typedef vector<ll> vi;
-typedef vector<vi> vii;
-typedef vector<vii> viii;
-typedef pair<ll, ll> pii;
-#define REP(i, a, b) for(int i = a; i < b; i++)
-#define REPe(i, a, b) for(int i = a; i <= b; i++)
-#define REPr(i, a, b) for(int i = a; i >= b; i--)
-#define F first
-#define S second
-#define PB push_back
-template <class T>          using uset = unordered_set<T>;
-template <class T, class U> using umap = unordered_map<T, U>;
-constexpr int INF = 1e9;
-constexpr int MOD = 1000000007;
-constexpr ll INF2 = (ll)1 << 47;
-
-bool debug = false;
-
+unordered_map<string, int> spelledOutDigits = {
+        {"one", 1}, {"two", 2},   {"three", 3}, {"four", 4}, {"five", 5},
+        {"six", 6}, {"seven", 7}, {"eight", 8}, {"nine", 9}, {"1", 1},
+        {"2", 2},   {"3", 3},     {"4", 4},     {"5", 5},    {"6", 6},
+        {"7", 7},   {"8", 8},     {"9", 9},
+};
 
 int main() {
-    if(!debug) {
-        ios::sync_with_stdio(false);
-        cin.tie(0);
-        cout.tie(0);
+    string tkn;
+    int tv = 0;
+    regex re("(?=(one|two|three|four|five|six|seven|eight|nine|[0-9])).");
+    smatch m;
+    for(int i = 0; i < 1000; i++) {
+        cin >> tkn;
+        sregex_iterator iter(tkn.begin(), tkn.end(), re);
+        sregex_iterator end;
+        int firstOccurrence = -1, lastOccurrence = -1;
+        printf("%s\n", tkn.c_str());
+
+        while (iter != end) {
+            smatch cmatch = *iter;
+            if(firstOccurrence == -1) {
+                firstOccurrence = spelledOutDigits[cmatch.str(1)];
+            }
+            lastOccurrence = spelledOutDigits[cmatch.str(1)];
+            ++iter;
+        }
+        printf("\t%d, %d\n", firstOccurrence, lastOccurrence);
+        tv += 10 * firstOccurrence + lastOccurrence;
     }
+    printf("%d\n", tv);
 
     return EXIT_SUCCESS;
 }
