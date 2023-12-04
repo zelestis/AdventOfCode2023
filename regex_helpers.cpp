@@ -1,11 +1,12 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-vector<string> getMatches(
+typedef vector<string> vs;
+
+vs getMatches(
         const string &input, const string &reg_in, bool overlap = true
 ) { // maybe put a lvalue ref on reg_in
-    vector<string> found_matches{};
+    vs found_matches{};
     regex re;
     if (overlap) {
         re = regex("(?=" + reg_in + ").");
@@ -52,4 +53,29 @@ string addValueToMatch(const string &input, const string &regexPattern, const in
         ++iter;
     }
     return result;
+}
+
+vs splitChar(const string &input, char reg_in) {
+    stringstream ss(input);
+    vs ans{};
+    string segment;
+
+    while (getline(ss, segment, reg_in)) {
+        if(segment.empty()) continue;
+        ans.push_back(segment);
+    }
+    return ans;
+}
+
+vs resplit(const string & input, const string & reg_in) {
+    vs ans{};
+    regex rgx(reg_in);
+    sregex_token_iterator iter(input.begin(), input.end(), rgx, -1);
+    sregex_token_iterator end;
+    for (; iter != end; ++iter) {
+        if(iter->length() == 0) continue;
+        if(*iter == reg_in) continue;
+        ans.push_back(*iter);
+    }
+    return ans;
 }
