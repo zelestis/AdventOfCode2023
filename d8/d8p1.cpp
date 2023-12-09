@@ -21,13 +21,55 @@ constexpr ll INF2 = (ll)1 << 47;
 
 bool debug = false;
 
+ll N = 730;
+vi graph[1 << 15];
+
+ll pos(const string & str) {
+    return (str[0]-'A') + ((str[1]-'A') * 26) + ((str[2]-'A') * 26 * 26);
+}
+
+string trev(ll val) {
+    ll a = val % 26;
+    val /= 26;
+    ll b = val % 26;
+    val /= 26;
+    ll c = val;
+    string g;
+    printf(" = %lld, %lld, %lld\n", a, b, c);
+    g += a + 'A';
+    g += b + 'A';
+    g += c + 'A';
+    return g;
+}
+
 
 int main() {
-    if(!debug) {
-        ios::sync_with_stdio(false);
-        cin.tie(0);
-        cout.tie(0);
+    string inst; cin >> inst;
+    string from, tkn, left, right;
+    REP(i, 0, N) {
+        cin >> from >> tkn >> left >> right;
+        printf("from=%s, tkn=%s, left=%s, right=%s\n",
+            from.c_str(),
+            tkn.c_str(),
+            left.c_str(),
+            right.c_str()
+        );
+        graph[pos(from)].PB(pos(left.substr(1, 3)));
+        graph[pos(from)].PB(pos(right.substr(0, 3)));
     }
+
+    ll cpos = 0, cinst = 0;
+    ll goal = pos("ZZZ");
+    printf("goal == %lld\n", goal);
+    ll cnt = 0;
+    while(cpos != goal) {
+        cnt++;
+        cout << cpos << " " << trev(cpos) << endl;
+        cpos = graph[cpos][inst[cinst++] == 'L' ? 0 : 1];
+        cinst %= inst.size();
+    }
+    printf("answer = %lld\n", cnt);
+    cout << cnt << endl;
 
     return EXIT_SUCCESS;
 }
