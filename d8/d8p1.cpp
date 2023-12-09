@@ -44,31 +44,32 @@ string trev(ll val) {
 
 
 int main() {
+    ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
     string inst; cin >> inst;
     string from, tkn, left, right;
     REP(i, 0, N) {
         cin >> from >> tkn >> left >> right;
-        printf("from=%s, tkn=%s, left=%s, right=%s\n",
-            from.c_str(),
-            tkn.c_str(),
-            left.c_str(),
-            right.c_str()
-        );
+        // printf("from=%s, tkn=%s, left=%s, right=%s\n",
+        //     from.c_str(),
+        //     tkn.c_str(),
+        //     left.c_str(),
+        //     right.c_str()
+        // );
         graph[pos(from)].PB(pos(left.substr(1, 3)));
         graph[pos(from)].PB(pos(right.substr(0, 3)));
     }
 
     ll cpos = 0, cinst = 0;
     ll goal = pos("ZZZ");
-    printf("goal == %lld\n", goal);
+    // printf("goal == %lld\n", goal);
     ll cnt = 0;
     while(cpos != goal) {
         cnt++;
-        cout << cpos << " " << trev(cpos) << endl;
+        // cout << cpos << " " << trev(cpos) << endl;
         cpos = graph[cpos][inst[cinst++] == 'L' ? 0 : 1];
         cinst %= inst.size();
     }
-    printf("answer = %lld\n", cnt);
+    // printf("answer = %lld\n", cnt);
     cout << cnt << endl;
 
     return EXIT_SUCCESS;
