@@ -21,6 +21,16 @@ constexpr ll INF2 = (ll)1 << 47;
 
 bool debug = false;
 
+constexpr ll N = 200;
+ll val(vi & vals) {
+    if(all_of(begin(vals), end(vals), [](int a){return a == 0;})) return 0;
+    int n = vals.size();
+    vi dif{};
+    REP(i, 1, n) {
+        dif.PB(vals[i] - vals[i-1]);
+    }
+    return vals[0] - val(dif);
+}
 
 int main() {
     if(!debug) {
@@ -28,6 +38,21 @@ int main() {
         cin.tie(0);
         cout.tie(0);
     }
+
+	ll t = 0;
+    string tkn;
+    REP(i, 0, N) {
+        getline(cin, tkn);
+        auto str = getMatches(tkn, "-?[0-9]+", false);
+        vi c{}; for(auto & s : str) {
+            printf("%s\n", s.c_str());
+            c.PB(stol(s));
+        }
+        t += val(c);
+    }
+    cout << t << endl;
+
+
 
     return EXIT_SUCCESS;
 }
