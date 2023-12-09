@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-
 #include "../regex_helpers.cpp"
 using namespace std;
 
@@ -21,65 +20,44 @@ constexpr int MOD = 1000000007;
 constexpr ll INF2 = (ll)1 << 47;
 
 bool debug = false;
-constexpr int N = 150;
+constexpr int N = 32;
+//constexpr int N = 150;
 string grid[N];
-
-vi all_numbers{};
-umap<ll, ll> comp2real{};
 umap<ll, ll> real2comp{};
-vi seeds{};
-vector<map<ll, pii>> groups(7, map<ll, pii>{});
+umap<ll, ll> comp2real{};
 
-
-void compress() {
-    int m = seeds.size();
-    for(int i = 0; i < m; i+=2) {
-        ll lo = seeds[i];
-        ll hi = seeds[i]+seeds[i+1];
-        all_numbers.PB(lo);
-        all_numbers.PB(hi);
+void gen_compression() {
+    vi nums{};
+    vi seeds{};
+    vector<string> toParse = getMatches(grid[0], "[0-9]+", false);
+    for(int i = 0; i < toParse.size(); i += 2) {
+        nums.PB(stoll(toParse[i]) + stoll(toParse[i+1]));
     }
-
-    for(auto & g : groups) {
-        for(auto & [k, v] : g) {
-            all_numbers.PB(k);
-            all_numbers.PB(k+v.S);
-            all_numbers.PB(v.F);
-            all_numbers.PB(v.F+v.S);
+    int ind = 3;
+    REP(i, 0, 7) {
+        printf("begin %d\n", i);
+        while(ind < N && grid[ind].length() > 4) {
+            auto m = getMatches(grid[ind], "[0-9]+", false);
+            nums.PB(stoll(m[0]));
+            nums.PB(stoll(m[1]));
+            nums.PB(stoll(m))
+            cmap[real2comp[stoll(m[1])]] = pii(real2comp[stoll(m[0])], real2comp[stoll(m[2])]);
+            printf("Raw in %lld -> {%lld %lld}\n",stoll(m[1]), stoll(m[0]), stoll(m[2]));
+            printf("Add in %lld -> {%lld %lld}\n",real2comp[stoll(m[1])], real2comp[stoll(m[0])], real2comp[stoll(m[2])]);
+            ind++;
         }
+        ind += 2;
     }
 
-    sort(begin(all_numbers), end(all_numbers));
-    all_numbers.erase(unique(begin(all_numbers), end(all_numbers), all_numbers.end()));
-    int n = all_numbers.size();
+    sort(begin(nums), end(nums));
+    nums.erase(unique(nums.begin(), nums.end()), nums.end());
+    int n = nums.size();
     REP(i, 0, n) {
-        real2comp[all_numbers[i]] = i;
-        comp2real[i] = all_numbers[i];
+        printf("%d -> %lld\n", i, nums[i]);
+        real2comp[nums[i]] = i;
+        comp2real[i] = nums[i];
     }
-
-
-	vi new_seeds{};
-    for(int i = 0; i < m; i+=2) {
-        ll lo = seeds[i];
-        ll hi = seeds[i]+seeds[i+1];
-        ll comp = real2comp[lo];
-        while(comp2real[comp] != hi) {
-            new_seeds.PB(comp++);
-        }
-        new_seeds.PB(comp++);
-    }
-    sort(begin(new_seeds), end(new_seeds));
-    new_seeds.erase(unique(begin(new_seeds), end(new_seeds), new_seeds.end()));
-    seeds = new_seeds;
-
-    for(auto & g : groups) {
-        for(auto & [k, v] : g) {
-            all_numbers.PB(k);
-            all_numbers.PB(k+v.S);
-            all_numbers.PB(v.F);
-            all_numbers.PB(v.F+v.S);
-        }
-    }
+    printf("Max compressed is %d\n", n);
 }
 
 int main() {
@@ -91,13 +69,19 @@ int main() {
 
     printf("alive0\n");
     for (auto & i : grid) getline(cin, i);
-
+    gen_compression();
     printf("alive1\n");
     vi seeds{};
-    for(const string & v : getMatches(grid[0], "[0-9]+", false)) {
-        printf("stolld %s", v.c_str());
-        seeds.PB(stoll(v));
+    vector<string> toParse = getMatches(grid[0], "[0-9]+", false);
+    for(int i = 0; i < toParse.size(); i += 2) {
+        ll val = real2comp[stoll(toParse[i])];
+        ll clen = real2comp[stoll(toParse[i+1])];
+        REP(j, 0, clen) {
+            seeds.PB(val + i);
+        }
     }
+    sort(seeds.begin(), seeds.end());
+    seeds.erase(unique(seeds.begin(), seeds.end()), seeds.end());
     printf("alive 1\n");
     int ind = 3;
     printf("alive 2\n");
@@ -109,13 +93,14 @@ int main() {
         while(ind < N && grid[ind].length() > 4) {
             printf("Parsing %s\n", grid[ind].c_str());
             auto m = getMatches(grid[ind], "[0-9]+", false);
-            cmap[stoll(m[1])] = pii(stoll(m[0]), stoll(m[2]));
+            cmap[real2comp[stoll(m[1])]] = pii(real2comp[stoll(m[0])], real2comp[stoll(m[2])]);
+            printf("Raw in %lld -> {%lld %lld}\n",stoll(m[1]), stoll(m[0]), stoll(m[2]));
+            printf("Add in %lld -> {%lld %lld}\n",real2comp[stoll(m[1])], real2comp[stoll(m[0])], real2comp[stoll(m[2])]);
             ind++;
         }
         ind += 2;
     }
     printf("alive 2\n");
-    compress();
 
     ll lowestLocation = (ll)1 << 47;
     for(auto & s : seeds) {
@@ -123,12 +108,12 @@ int main() {
         printf("Starting %lld\n", cval);
         REP(i, 0, 7) {
             auto it = groups[i].lower_bound(cval);
+            if(it != groups[i].begin() && (it->first != cval || it == groups[i].end) {
+                it--;
+            }
             if(it == groups[i].end()) {
                 printf("Beyond the max, skipping\n");
                 continue;
-            }
-            if(it != groups[i].begin() && it->first != cval) {
-                it--;
             }
             ll lower = it->F;
             ll upper = it->F + it->S.S;
@@ -142,6 +127,6 @@ int main() {
         lowestLocation = min(cval, lowestLocation);
     }
 
-    cout << lowestLocation << endl;
+    cout << comp2real[lowestLocation] << endl;
     return EXIT_SUCCESS;
 }

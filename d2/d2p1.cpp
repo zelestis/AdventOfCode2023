@@ -20,7 +20,8 @@ constexpr int MOD = 1000000007;
 constexpr ll INF2 = (ll)1 << 47;
 
 bool debug = false;
-
+constexpr int N = 32;
+string grid[N];
 
 int main() {
     if(!debug) {
@@ -28,6 +29,9 @@ int main() {
         cin.tie(0);
         cout.tie(0);
     }
+    REP(i, 0, N) getline(cin, grid[i]);
+
+    vi seeds
 
     return EXIT_SUCCESS;
 }
